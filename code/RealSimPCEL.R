@@ -59,7 +59,7 @@ Xn = Matrix(c(rep(1,n),columbus$HOVAL,columbus$INC),n,p)
 #===============================================
 #                    求解AEL
 #===============================================
-myPCEL<- function(overtheta){
+myPCEL <- function(overtheta){
   # 求解参数
   beta = overtheta[1:p]
   rou1 = overtheta[p+1]
@@ -113,12 +113,26 @@ myPCEL<- function(overtheta){
   Sigma[p+3,p+3] = n*(mu4-sigma4)
   # 计算Sigma特征向量
   E = eigen(Sigma)$vec
+  evals <- eigen(Sigma)$values
+  evals_prop <- evals / sum(evals)
+  # fig6
+  setEPS()
+  postscript('fig6-b.eps', width=4.5, height=3.1, paper="special", horizontal=FALSE)
+  par(mar=c(4.5,4.5,0.5,0.5), oma=c(0,0,0,0))
+  plot(1:length(evals_prop), evals_prop, type = "b", 
+       xlab = "Index of eigenvalue", ylab = "Normalized eigenvalue", 
+       ylim = c(0, 1), las = 1)
+  axis(2, las = 2)
+  text(1+0.05, evals_prop[1], labels = sprintf("%.2f", evals_prop[1]), pos = 3, cex = 0.8)
+  text(2+0.15, evals_prop[2], labels = sprintf("%.2f", evals_prop[2]), pos = 3, cex = 0.8)
+  dev.off()
+  
   # 特征向量标准化
   E = t(t(E)/sqrt(colSums(E^2)))
   # 检验E模长为1 print(colSums(E^2))
 
   # 计算PCEL-s值
-  s = 1
+  s = 2
   Es = E[,1:s]
   pczs=z%*%Es
   pclams=lambdaChen(pczs)
@@ -126,7 +140,7 @@ myPCEL<- function(overtheta){
   
   return(pcels)
 }
-s = 1
+s = 2
 cat('s：',s,'\n')
 cat('参数初值：',overtheta,'\n')
 PCELresult = nlminb(overtheta, myPCEL, lower = c(rep(-Inf,p),-0.99,-0.99,0.01,rep(-Inf,2)), upper = c(c(Inf,0,0),0.99,0.99,Inf,rep(Inf,2)))
@@ -140,12 +154,12 @@ cat('mae：',mae,'\n')
 # 检验参数
 # s = 1
 # par = c(48.99963, -0.3129058, -1.004385, 0.3678953, 0.200798, 0.9999725, -4.105493e-05, 3.000015) # 1.634124e-14
-# par = c(48.9996, -0.3129, -1.0044, 0.3679, 0.2008, 1.0000, -0.0000, 3.0000) # 1.477333e-14
+par = c(48.9996, -0.3129, -1.0044, 0.3679, 0.2008, 1.0000, -0.0000, 3.0000) # 1.477333e-14
 # s = 2
 # par = c(48.99966, -0.3117704, -1.004343, 0.3666539, 0.179707, 1.000014, 4.310436e-05, 3.000038) # 1.479939e-14 
-# par = c(49.0000, -0.3118, -1.0043, 0.3667, 0.1797, 1.0000, 0.0000, 3.0000) # 1.273414e-14
+par = c(49.0000, -0.3118, -1.0043, 0.3667, 0.1797, 1.0000, 0.0000, 3.0000) # 1.273414e-14
 # cat('pcels<qchisq(0.95,s):',myPCEL(par)<qchisq(0.95,s),'myPCEL(par):',myPCEL(par),'\n')
-# cat('p值：', 1 - pchisq(myPCEL(par), df = s), '\n')
+cat('p值：', 1 - pchisq(myPCEL(par), df = s), '\n')
 
 # rmse = sqrt(mean((Yn-Yn_hat(par,p))^2))
 # cat('rmse：',rmse,'\n')
