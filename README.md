@@ -8,7 +8,8 @@
 PCEL/
 ├── README.md                    # 本文件
 ├── code/                        # 主要代码目录
-│   ├── RealSimPCEL.R          # PCEL 方法在真实数据上的实现
+│   ├── RealSimPCEL.R          # PCEL 方法在真实数据上的实现(Sigma估计方式1)
+│   ├── RealSimPCEL2.R         # PCEL 方法在真实数据上的实现(Sigma估计方式2)
 │   ├── RealSimEL.R            # EL 方法在真实数据上的实现
 │   ├── RealSimMAE.R           # 平均绝对误差计算
 │   ├── GlambdaChen.R          # Lambda 计算辅助函数
